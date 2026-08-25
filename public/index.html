@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Insight Hub - Explore. Learn. Innovate. Shape the Future</title>
+  <meta name="description" content="Discover the latest technology, artificial intelligence, programming, cybersecurity, gadgets and innovations shaping our digital world at Insight Hub.">
+  <meta name="keywords" content="technology, AI, artificial intelligence, coding, web development, cybersecurity, gadgets, future tech">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    /* Lock scroll during splash animation */
+    body:not(.page-loaded) { overflow: hidden; }
+  </style>
+</head>
+<body>
+
+  <!-- =====================================================
+       SPLASH / INTRO WELCOME ANIMATION SCREEN
+       Shown for ~3.2s when website first loads
+       ===================================================== -->
+  <div class="splash-screen" id="splashScreen" aria-hidden="true">
+    <!-- Loading progress bar at bottom -->
+    <div class="splash-loader-bar"></div>
+
+    <!-- "Welcome to" text fades in first -->
+    <div class="splash-welcome">Welcome to</div>
+
+    <!-- Central glowing orb with revolving rings (mirrors hero animation) -->
+    <div class="splash-orb" id="splashOrb">
+      <!-- Revolving rings around the orb -->
+      <div class="splash-orbit-ring splash-orbit-ring-1"></div>
+      <div class="splash-orbit-ring splash-orbit-ring-2"></div>
+      <!-- Core letter -->
+      <span class="splash-orb-letter">IH</span>
+      <span class="splash-orb-sub">Insight Hub</span>
+    </div>
+
+    <!-- Brand name appears after orb -->
+    <div class="splash-brand">Insight Hub</div>
+
+    <!-- Tagline appears last -->
+    <div class="splash-tagline">Explore · Learn · Innovate · Shape the Future</div>
+  </div>
+
+  <!-- Ambient Glow Gradients -->
+  <div class="ambient-glow-1"></div>
+  <div class="ambient-glow-2"></div>
+
+  <!-- Navigation Bar -->
+  <header class="navbar" id="navbar">
+    <div class="container nav-container">
+      <a href="/" class="brand-logo" id="brandLogo" aria-label="Insight Hub Home">
+        <div class="brand-orb">IH</div>
+        <span><span class="brand-text">Insight</span><span class="brand-hub">Hub</span></span>
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <nav aria-label="Primary Navigation">
+        <ul class="nav-links">
+          <li><a href="#hero" class="nav-link active">Home</a></li>
+          <li><a href="#explore" class="nav-link">Explore</a></li>
+          <li><a href="#categories" class="nav-link">Categories</a></li>
+          <li><a href="#featured" class="nav-link">Featured</a></li>
+          <li><a href="#contact" class="nav-link">Contact</a></li>
+        </ul>
+      </nav>
+
+      <!-- Nav Action Buttons -->
+      <div class="nav-actions">
+        <!-- Quick Search Icon Button -->
+        <button class="btn-icon" id="navSearchBtn" title="Search Articles" aria-label="Search Articles">
+          🔍
+        </button>
+
+        <!-- Dedicated Mail Button -->
+        <a href="mailto:asitech5info@gmail.com" class="btn-social-mail" id="navMailBtn" title="Email asitech5info@gmail.com" target="_blank" rel="noopener noreferrer">
+          <span>✉️</span>
+          <span>Mail Us</span>
+        </a>
+
+        <!-- Dedicated YouTube Button -->
+        <a href="https://www.youtube.com/@howtech_works" class="btn-social-yt" id="navYtBtn" title="Visit HowTech Works YouTube" target="_blank" rel="noopener noreferrer">
+          <svg class="yt-play-icon" viewBox="0 0 24 24">
+            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+          </svg>
+          <span>YouTube</span>
+        </a>
+
+        <!-- Dark / Light Theme Toggle -->
+        <button class="btn-icon" id="themeToggleBtn" title="Toggle Theme" aria-label="Toggle Theme">
+          <span id="themeIcon">🌙</span>
+        </button>
+
+        <!-- Mobile Hamburger Button -->
+        <button class="btn-hamburger" id="hamburgerBtn" aria-label="Toggle Mobile Menu">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer -->
+  <div class="mobile-drawer" id="mobileDrawer">
+    <ul class="mobile-nav-links">
+      <li><a href="#hero" class="mobile-nav-link" onclick="toggleMobileMenu()">Home <span>→</span></a></li>
+      <li><a href="#explore" class="mobile-nav-link" onclick="toggleMobileMenu()">Explore <span>→</span></a></li>
+      <li><a href="#categories" class="mobile-nav-link" onclick="toggleMobileMenu()">Categories <span>→</span></a></li>
+      <li><a href="#featured" class="mobile-nav-link" onclick="toggleMobileMenu()">Featured <span>→</span></a></li>
+      <li><a href="#contact" class="mobile-nav-link" onclick="toggleMobileMenu()">Contact <span>→</span></a></li>
+    </ul>
+
+    <div class="mobile-actions">
+      <a href="mailto:asitech5info@gmail.com" class="btn-social-mail" style="justify-content: center;">
+        <span>✉️</span>
+        <span>asitech5info@gmail.com</span>
+      </a>
+      <a href="https://www.youtube.com/@howtech_works" class="btn-social-yt" target="_blank" rel="noopener noreferrer" style="justify-content: center;">
+        <svg class="yt-play-icon" viewBox="0 0 24 24">
+          <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+        </svg>
+        <span>@howtech_works YouTube</span>
+      </a>
+    </div>
+  </div>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="hero-section" id="hero">
+      <div class="container">
+        <div class="hero-grid">
+          <!-- Hero Text -->
+          <div class="hero-content">
+            <div class="hero-badge">
+              <span class="pulse-dot"></span>
+              <span>Welcome to Insight Hub</span>
+            </div>
+
+            <h1 class="hero-title">
+              EXPLORE.<br>
+              LEARN.<br>
+              INNOVATE.<br>
+              <span class="highlight">Shape the Future.</span>
+            </h1>
+
+            <p class="hero-subtitle">
+              Discover the latest technology, artificial intelligence, programming, cybersecurity, gadgets and innovations shaping our digital world.
+            </p>
+
+            <div class="hero-cta-group">
+              <a href="#explore" class="btn-primary" id="heroExploreBtn">
+                <span>Explore Categories</span>
+                <span>→</span>
+              </a>
+              <a href="#latest" class="btn-secondary" id="heroLatestBtn">
+                <span>Latest Articles</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Hero 3D Revolving Orbital Picture Visual -->
+          <div class="hero-visual" id="heroVisual">
+            <div class="orbital-stage">
+              <!-- Orbit Rings -->
+              <div class="orbit-ring orbit-ring-1"></div>
+              <div class="orbit-ring orbit-ring-2"></div>
+              <div class="orbit-ring orbit-ring-3"></div>
+
+              <!-- Central Core Glowing Hub Orb -->
+              <div class="core-hub-orb" id="coreHubOrb">
+                <span class="core-letter">IH</span>
+                <span class="core-sub">Insight Hub</span>
+              </div>
+
+              <!-- Revolving Track with Orbiting Tech Badges -->
+              <div class="orbiting-nodes-track">
+                <div class="tech-node-badge node-ai" onclick="filterByCategory('ai-ml')">
+                  <span>🤖</span>
+                  <div>
+                    <div>AI</div>
+                    <div style="font-size:0.65rem; color:#a78bfa; font-weight:400;">Machine Learning</div>
+                  </div>
+                </div>
+
+                <div class="tech-node-badge node-code" onclick="filterByCategory('web-dev')">
+                  <span>&lt;/&gt;</span>
+                  <div>
+                    <div>Code</div>
+                    <div style="font-size:0.65rem; color:#38bdf8; font-weight:400;">Development</div>
+                  </div>
+                </div>
+
+                <div class="tech-node-badge node-future" onclick="filterByCategory('future-tech')">
+                  <span>⚡</span>
+                  <div>
+                    <div>Future Tech</div>
+                    <div style="font-size:0.65rem; color:#34d399; font-weight:400;">Quantum &amp; Bio</div>
+                  </div>
+                </div>
+
+                <div class="tech-node-badge node-cyber" onclick="filterByCategory('cybersecurity')">
+                  <span>🛡️</span>
+                  <div>
+                    <div>Security</div>
+                    <div style="font-size:0.65rem; color:#fbbf24; font-weight:400;">Zero-Trust</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats Ribbon Bar -->
+        <div class="stats-ribbon" id="statsRibbon">
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-number" id="statArticles">120+</div>
+              <div class="stat-label">Tech Articles</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number" id="statCategories">12+</div>
+              <div class="stat-label">Categories</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number" id="statReaders">25K+</div>
+              <div class="stat-label">Active Readers</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number" id="statUptime">24/7</div>
+              <div class="stat-label">Live Tech Hub</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Explore & Categories Section -->
+    <section class="container" id="explore" style="padding-top: 3rem; padding-bottom: 2rem;">
+      <div class="section-header" id="categories">
+        <span class="section-tag">Explore Knowledge</span>
+        <h2 class="section-title">Discover Tech Insights</h2>
+      </div>
+
+      <!-- Controls: Category chips, Search bar, Sort selector -->
+      <div class="controls-wrapper">
+        <!-- Category Filter Chips -->
+        <div class="category-scroll-container" id="categoryChips">
+          <button class="category-chip active" data-category="all">✨ All Insights</button>
+          <button class="category-chip" data-category="ai-ml">🤖 AI &amp; Machine Learning</button>
+          <button class="category-chip" data-category="web-dev">💻 Web Development</button>
+          <button class="category-chip" data-category="cybersecurity">🛡️ Cybersecurity</button>
+          <button class="category-chip" data-category="future-tech">⚡ Future Tech</button>
+          <button class="category-chip" data-category="cloud-devops">☁️ Cloud &amp; DevOps</button>
+          <button class="category-chip" data-category="gadgets">🔮 Gadgets &amp; Hardware</button>
+        </div>
+
+        <!-- Search Bar & Sort Row -->
+        <div class="search-filter-row">
+          <div class="search-input-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="blogSearchInput" class="search-input" placeholder="Search blogs by title, keywords, tags, or topics..." autocomplete="off">
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <label for="sortSelect" style="font-size: 0.85rem; color: var(--text-secondary); font-weight:600;">Sort By:</label>
+            <select id="sortSelect" class="sort-select">
+              <option value="newest">Newest First</option>
+              <option value="popular">Most Popular (Views &amp; Likes)</option>
+              <option value="rating">Highest Rated</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Blog Posts Grid -->
+      <div class="blogs-grid" id="blogsGrid">
+        <!-- Dynamically rendered via JS -->
+      </div>
+    </section>
+
+    <!-- Contact Admin Section -->
+    <section class="contact-section" id="contact">
+      <div class="container">
+        <div class="section-header" style="text-align: center; margin-bottom: 3rem;">
+          <span class="section-tag">Get in Touch</span>
+          <h2 class="section-title">Connect with Insight Hub</h2>
+          <p style="color: var(--text-secondary); max-width: 540px; margin: 0.5rem auto 0 auto;">
+            Have a question, feedback on an article, or want to collaborate with our tech editorial team? Send us a direct message.
+          </p>
+        </div>
+
+        <div class="contact-grid">
+          <!-- Contact Info Cards -->
+          <div class="contact-info-panel">
+            <!-- Email Card -->
+            <div class="contact-card-box">
+              <div class="contact-card-icon icon-mail">✉️</div>
+              <div>
+                <h3 class="contact-card-title">Official Email</h3>
+                <a href="mailto:asitech5info@gmail.com" class="contact-card-link" id="contactEmailLink">asitech5info@gmail.com</a>
+                <div style="font-size: 0.8rem; color: var(--emerald-light); margin-top: 4px;">Direct editorial &amp; support inbox</div>
+              </div>
+            </div>
+
+            <!-- YouTube Channel Card -->
+            <div class="contact-card-box">
+              <div class="contact-card-icon icon-yt">
+                <svg class="yt-play-icon" style="width:26px; height:26px;" viewBox="0 0 24 24">
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                </svg>
+              </div>
+              <div>
+                <h3 class="contact-card-title">YouTube Channel</h3>
+                <a href="https://www.youtube.com/@howtech_works" class="contact-card-link" id="contactYtLink" target="_blank" rel="noopener noreferrer">youtube.com/@howtech_works</a>
+                <div style="font-size: 0.8rem; color: #f87171; margin-top: 4px;">Watch cutting-edge tech tutorials</div>
+              </div>
+            </div>
+
+            <!-- Fast Response Badge -->
+            <div style="background: rgba(139, 92, 246, 0.08); border: 1px dashed var(--border-glow); border-radius: var(--radius-md); padding: 1.25rem;">
+              <div style="font-weight: 700; color: var(--purple-light); font-size: 0.95rem; margin-bottom: 0.3rem;">⚡ Fast Editorial Review</div>
+              <div style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+                All contact messages are forwarded directly to the Insight Hub admin team and answered within 24-48 hours.
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact Form -->
+          <div class="contact-form-panel">
+            <form id="contactForm">
+              <div class="form-group">
+                <label for="contactName" class="form-label">Your Name *</label>
+                <input type="text" id="contactName" class="form-input" placeholder="e.g. John Doe" required>
+              </div>
+
+              <div class="form-group">
+                <label for="contactEmail" class="form-label">Your Email Address *</label>
+                <input type="email" id="contactEmail" class="form-input" placeholder="e.g. john@example.com" required>
+              </div>
+
+              <div class="form-group">
+                <label for="contactSubject" class="form-label">Subject</label>
+                <input type="text" id="contactSubject" class="form-input" placeholder="Article inquiry, review feedback, or collaboration">
+              </div>
+
+              <div class="form-group">
+                <label for="contactMessage" class="form-label">Message *</label>
+                <textarea id="contactMessage" class="form-textarea" rows="4" placeholder="Write your message here..." required></textarea>
+              </div>
+
+              <button type="submit" class="btn-primary" id="contactSubmitBtn" style="width: 100%; justify-content: center;">
+                <span>Send Message to Admin</span>
+                <span>✉️</span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer (No Admin Button) -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="brand-logo">
+            <div class="brand-orb">IH</div>
+            <span><span class="brand-text">Insight</span><span class="brand-hub">Hub</span></span>
+          </div>
+          <p>
+            The frontier tech journal exploring artificial intelligence, cyber defense, web architecture, and future computational paradigms.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Navigation</h4>
+          <ul class="footer-links">
+            <li><a href="#hero" class="footer-link">Home</a></li>
+            <li><a href="#explore" class="footer-link">Explore Articles</a></li>
+            <li><a href="#categories" class="footer-link">Categories</a></li>
+            <li><a href="#contact" class="footer-link">Contact Admin</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Categories</h4>
+          <ul class="footer-links">
+            <li><a href="#explore" class="footer-link" onclick="filterByCategory('ai-ml')">AI &amp; Machine Learning</a></li>
+            <li><a href="#explore" class="footer-link" onclick="filterByCategory('cybersecurity')">Cybersecurity</a></li>
+            <li><a href="#explore" class="footer-link" onclick="filterByCategory('web-dev')">Web Development</a></li>
+            <li><a href="#explore" class="footer-link" onclick="filterByCategory('future-tech')">Future Tech</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Connect With Us</h4>
+          <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:1.2rem; line-height:1.5;">Reach out or follow our channel for the latest tech insights.</p>
+          <!-- Prominent footer social buttons -->
+          <div class="footer-social-btns">
+            <a href="mailto:asitech5info@gmail.com"
+               class="footer-social-btn footer-mail-btn"
+               target="_blank"
+               rel="noopener noreferrer"
+               title="Email: asitech5info@gmail.com">
+              <span class="footer-social-icon">✉️</span>
+              <div class="footer-social-info">
+                <span class="footer-social-label">Mail Us</span>
+                <span class="footer-social-sub">asitech5info@gmail.com</span>
+              </div>
+            </a>
+            <a href="https://www.youtube.com/@howtech_works"
+               class="footer-social-btn footer-yt-btn"
+               target="_blank"
+               rel="noopener noreferrer"
+               title="YouTube: @howtech_works">
+              <span class="footer-social-icon">
+                <svg viewBox="0 0 24 24" style="width:22px;height:22px;fill:currentColor">
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                </svg>
+              </span>
+              <div class="footer-social-info">
+                <span class="footer-social-label">YouTube</span>
+                <span class="footer-social-sub">@howtech_works</span>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; 2026 The Insight Hub. All rights reserved. Shape the Future.</div>
+        <div style="font-size: 0.8rem; color: var(--text-muted);">Crafted with Purple, Emerald &amp; Cyan Neon Intelligence.</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Blog Detail Reader Modal -->
+  <div class="modal-overlay" id="readerModalOverlay" role="dialog" aria-modal="true">
+    <div class="modal-container" id="readerModalContainer">
+      <button class="modal-close-btn" id="modalCloseBtn" aria-label="Close article modal">✕</button>
+      
+      <img id="readerCoverImg" class="reader-hero-img" src="" alt="Article cover">
+
+      <div class="reader-content-wrap">
+        <div class="reader-header">
+          <div class="reader-badge-row">
+            <span class="card-category-badge" id="readerCategory">AI</span>
+            <span class="card-read-time" id="readerReadTime">5 min read</span>
+            <span id="readerViewsCount" style="font-size: 0.8rem; color: var(--text-muted);">👁️ 1.2k views</span>
+          </div>
+
+          <h1 class="reader-title" id="readerTitle">Blog Title</h1>
+
+          <div class="reader-meta-bar">
+            <div class="author-info">
+              <img id="readerAuthorAvatar" class="author-avatar" src="" alt="Author">
+              <div>
+                <div class="author-name" id="readerAuthorName">Author Name</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);" id="readerAuthorRole">Editor</div>
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <button class="btn-like-heart" id="readerLikeBtn">
+                <span>❤️</span>
+                <span id="readerLikeCount">0</span>
+              </button>
+              <button class="btn-secondary" id="readerShareBtn" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;">
+                <span>🔗 Share</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Article Body -->
+        <article class="reader-body" id="readerArticleBody">
+          <!-- Rendered Article Content -->
+        </article>
+
+        <!-- Reviews & Feedback Section -->
+        <section class="reviews-section-wrap" id="reviewsSection">
+          <div class="reviews-header">
+            <div>
+              <h3 class="reviews-title">Reader Reviews &amp; Discussion</h3>
+              <div style="font-size: 0.9rem; color: var(--text-secondary);" id="reviewsSummaryText">
+                ⭐ Average Rating: 5.0 (0 reviews)
+              </div>
+            </div>
+          </div>
+
+          <!-- Add Review Form -->
+          <div class="review-form-card">
+            <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem;">Leave a Review &amp; Rating</h4>
+            <form id="submitReviewForm">
+              <div class="form-group">
+                <label class="form-label">Your Rating</label>
+                <div class="star-rating-picker" id="starPicker">
+                  <span class="star-pick active" data-rating="1">★</span>
+                  <span class="star-pick active" data-rating="2">★</span>
+                  <span class="star-pick active" data-rating="3">★</span>
+                  <span class="star-pick active" data-rating="4">★</span>
+                  <span class="star-pick active" data-rating="5">★</span>
+                </div>
+                <input type="hidden" id="selectedRating" value="5">
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                  <label for="reviewUserName" class="form-label">Your Name *</label>
+                  <input type="text" id="reviewUserName" class="form-input" placeholder="e.g. Alex" required>
+                </div>
+                <div class="form-group">
+                  <label for="reviewUserEmail" class="form-label">Your Email (Optional)</label>
+                  <input type="email" id="reviewUserEmail" class="form-input" placeholder="e.g. alex@tech.io">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="reviewComment" class="form-label">Your Review / Thoughts *</label>
+                <textarea id="reviewComment" class="form-textarea" rows="3" placeholder="Share your perspective, questions, or review of this article..." required></textarea>
+              </div>
+
+              <button type="submit" class="btn-primary" id="reviewSubmitBtn" style="padding: 0.65rem 1.5rem; font-size: 0.92rem;">
+                <span>Post Review</span>
+                <span>⭐</span>
+              </button>
+            </form>
+          </div>
+
+          <!-- Reviews List -->
+          <div id="reviewsList">
+            <!-- Rendered Reviews with Admin Replies -->
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- JavaScript -->
+  <script src="/js/app.js"></script>
+</body>
+</html>

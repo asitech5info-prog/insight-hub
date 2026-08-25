@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Insight Hub - Secure Admin Command Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    /* Admin-specific layout styles */
+    .admin-body {
+      background: var(--bg-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Login Lock Screen */
+    .login-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 7, 18, 0.95);
+      backdrop-filter: blur(25px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 440px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-glow);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      box-shadow: var(--shadow-lg), var(--shadow-neon-purple);
+      text-align: center;
+      position: relative;
+    }
+
+    .login-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.8rem;
+      background: rgba(139, 92, 246, 0.15);
+      border: 1px solid var(--purple-primary);
+      border-radius: var(--radius-full);
+      color: var(--purple-light);
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+
+    .login-title {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .login-subtitle {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+    }
+
+    .password-input-wrap {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+
+    .password-toggle-btn {
+      position: absolute;
+      right: 0.8rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    /* Admin Top Navigation */
+    .admin-navbar {
+      background: var(--bg-glass);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 0.9rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(16px);
+    }
+
+    .admin-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+
+    .admin-chip {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--emerald-light);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 0.2rem 0.6rem;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .admin-nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    /* Admin Main Container & Tabs */
+    .admin-container {
+      max-width: 1350px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+      flex: 1;
+      width: 100%;
+    }
+
+    .admin-tabs-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+      overflow-x: auto;
+    }
+
+    .admin-tab-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.25rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all var(--transition-fast);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .admin-tab-btn:hover {
+      color: var(--text-primary);
+      background: rgba(139, 92, 246, 0.1);
+      border-color: var(--purple-light);
+    }
+
+    .admin-tab-btn.active {
+      background: var(--gradient-brand);
+      color: #ffffff;
+      border-color: transparent;
+      box-shadow: 0 0 15px var(--purple-glow);
+    }
+
+    .tab-badge {
+      background: rgba(239, 68, 68, 0.85);
+      color: #ffffff;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 0.15rem 0.45rem;
+      border-radius: var(--radius-full);
+      margin-left: 0.25rem;
+    }
+
+    /* Admin Tab Panels */
+    .tab-panel {
+      display: none;
+      animation: fadeIn 0.25s ease-in-out;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Admin Cards & Stats Grid */
+    .admin-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      backdrop-filter: blur(14px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: var(--gradient-brand);
+    }
+
+    .kpi-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    .kpi-value {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .kpi-sub {
+      font-size: 0.78rem;
+      color: var(--emerald-light);
+      margin-top: 0.25rem;
+    }
+
+    /* Data Tables */
+    .data-table-wrapper {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      overflow-x: auto;
+      backdrop-filter: blur(16px);
+    }
+
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.92rem;
+    }
+
+    .admin-table th {
+      padding: 1rem 1.25rem;
+      background: rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid var(--border-subtle);
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      letter-spacing: 0.05em;
+    }
+
+    .admin-table td {
+      padding: 1.1rem 1.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      vertical-align: middle;
+    }
+
+    .admin-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .table-thumb {
+      width: 50px;
+      height: 40px;
+      border-radius: var(--radius-sm);
+      object-fit: cover;
+    }
+
+    .btn-action-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-sm {
+      padding: 0.35rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      transition: all var(--transition-fast);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .btn-sm-edit {
+      background: rgba(6, 182, 212, 0.15);
+      border: 1px solid rgba(6, 182, 212, 0.35);
+      color: var(--cyan-light);
+    }
+
+    .btn-sm-edit:hover {
+      background: var(--cyan-primary);
+      color: #ffffff;
+    }
+
+    .btn-sm-delete {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #f87171;
+    }
+
+    .btn-sm-delete:hover {
+      background: #ef4444;
+      color: #ffffff;
+    }
+
+    .btn-sm-reply {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: var(--emerald-light);
+    }
+
+    .btn-sm-reply:hover {
+      background: var(--emerald-primary);
+      color: #ffffff;
+    }
+
+    /* Action Headers */
+    .table-header-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .unread-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--cyan-primary);
+      display: inline-block;
+      margin-right: 6px;
+      box-shadow: 0 0 8px var(--cyan-primary);
+    }
+  </style>
+</head>
+<body class="admin-body">
+
+  <!-- Ambient Glow -->
+  <div class="ambient-glow-1"></div>
+  <div class="ambient-glow-2"></div>
+
+  <!-- PASSWORD LOGIN OVERLAY (Active if not authenticated) -->
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-card">
+      <div class="login-badge">
+        <span>🔒</span>
+        <span>Secure Terminal Access</span>
+      </div>
+
+      <h1 class="login-title">Insight Hub Admin</h1>
+      <p class="login-subtitle">Enter administrator master password to unlock the management portal.</p>
+
+      <form id="adminLoginForm">
+        <div class="password-input-wrap">
+          <input type="password" id="adminPasswordInput" class="form-input" placeholder="Enter Admin Password..." required autocomplete="current-password" autofocus>
+          <button type="button" class="password-toggle-btn" id="togglePasswordBtn" title="Show/Hide Password">👁️</button>
+        </div>
+
+        <button type="submit" class="btn-primary" id="loginSubmitBtn" style="width: 100%; justify-content: center;">
+          <span>Unlock Admin Center</span>
+          <span>⚡</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ADMIN DASHBOARD (Visible once authenticated) -->
+  <div id="adminApp" style="display: none;">
+    <!-- Top Navbar -->
+    <header class="admin-navbar">
+      <div class="admin-brand">
+        <div class="brand-orb">IH</div>
+        <span>Insight Hub <span style="font-weight:400; color:var(--lime-light);">Admin</span></span>
+        <span class="admin-chip">Live Master</span>
+      </div>
+
+      <div class="admin-nav-actions">
+        <a href="/" class="btn-secondary" style="padding: 0.45rem 1rem; font-size: 0.85rem;" target="_blank">
+          <span>🌐 View Public Site</span>
+        </a>
+
+        <button class="btn-icon" id="adminThemeToggleBtn" title="Toggle Theme">
+          <span id="adminThemeIcon">🌙</span>
+        </button>
+
+        <button class="btn-social-yt" id="adminLogoutBtn" style="cursor: pointer;">
+          <span>🚪 Logout</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Admin Container -->
+    <main class="admin-container">
+      <!-- Tabs Navigation Bar -->
+      <div class="admin-tabs-bar">
+        <button class="admin-tab-btn active" data-tab="overview">
+          <span>📊 Overview &amp; Analytics</span>
+        </button>
+        <button class="admin-tab-btn" data-tab="blogs">
+          <span>📝 Articles &amp; Studio</span>
+          <span class="tab-badge" id="blogsCountBadge" style="background:var(--lime-dark); color:#050a07; font-weight:800;">0</span>
+        </button>
+        <button class="admin-tab-btn" data-tab="reviews">
+          <span>⭐ Review Moderation</span>
+          <span class="tab-badge" id="reviewsCountBadge" style="background:var(--yellow-dark); color:#050a07; font-weight:800;">0</span>
+        </button>
+        <button class="admin-tab-btn" data-tab="messages">
+          <span>✉️ Inquiries &amp; CRM</span>
+          <span class="tab-badge" id="unreadMessagesBadge" style="display:none; background:#ef4444;">0</span>
+        </button>
+        <button class="admin-tab-btn" data-tab="settings">
+          <span>⚙️ Site Settings &amp; Backup</span>
+        </button>
+      </div>
+
+      <!-- ==========================================
+           TAB 1: OVERVIEW & ADVANCED ANALYTICS
+           ========================================== -->
+      <div class="tab-panel active" id="tab-overview">
+        <!-- Top KPI Cards -->
+        <div class="admin-kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-title">Published Articles</div>
+            <div class="kpi-value" id="kpiBlogs">0</div>
+            <div class="kpi-sub" id="kpiFeaturedSub">⭐ 0 Featured Articles</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-title">Total Reader Views</div>
+            <div class="kpi-value" id="kpiViews">0</div>
+            <div class="kpi-sub" style="color:var(--lime-light);">🔥 Active Reader Engagement</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-title">Reader Reviews</div>
+            <div class="kpi-value" id="kpiReviews">0</div>
+            <div class="kpi-sub" id="kpiAvgRating" style="color:var(--yellow-neon);">Avg: 5.0 ★ (100% Positive)</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-title">Contact Inquiries</div>
+            <div class="kpi-value" id="kpiMessages">0</div>
+            <div class="kpi-sub" id="kpiUnreadMessages" style="color:var(--cyan-light);">0 unread messages</div>
+          </div>
+        </div>
+
+        <!-- Analytics Visualizations & Quick Command Row -->
+        <div style="display: grid; grid-template-columns: 1.1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+          <!-- Category Distribution Meter -->
+          <div class="data-table-wrapper" style="padding: 1.75rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
+              <h3 style="font-size: 1.15rem; font-weight: 800;">📚 Articles by Category</h3>
+              <span style="font-size: 0.8rem; color: var(--lime-light); font-weight: 700;">Live Distribution</span>
+            </div>
+            <div id="categoryDistributionBars" style="display: flex; flex-direction: column; gap: 1rem;">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- Reader Sentiment & Rating Distribution -->
+          <div class="data-table-wrapper" style="padding: 1.75rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
+              <h3 style="font-size: 1.15rem; font-weight: 800;">⭐ Reader Feedback Sentiment</h3>
+              <span style="font-size: 0.8rem; color: var(--yellow-neon); font-weight: 700;">5-Star Rating Breakdown</span>
+            </div>
+            <div id="ratingDistributionBars" style="display: flex; flex-direction: column; gap: 0.85rem;">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity & Shortcuts -->
+        <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 2rem;">
+          <div class="data-table-wrapper" style="padding: 1.75rem;">
+            <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 1.25rem;">✉️ Recent Inquiries &amp; Messages</h3>
+            <div id="overviewRecentMessages">
+              <!-- Recent messages list -->
+            </div>
+          </div>
+
+          <div class="data-table-wrapper" style="padding: 1.75rem;">
+            <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 1.25rem;">⚡ Quick Command Hub</h3>
+            <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+              <button class="btn-primary" onclick="openCreateBlogModal()" style="justify-content: center; padding: 0.75rem;">
+                <span>+ Create New Article</span>
+              </button>
+              <button class="btn-secondary" onclick="switchAdminTab('reviews')" style="justify-content: center; padding: 0.75rem;">
+                <span>⭐ Moderate Reviews</span>
+              </button>
+              <button class="btn-secondary" onclick="switchAdminTab('messages')" style="justify-content: center; padding: 0.75rem;">
+                <span>✉️ Inquiries Inbox</span>
+              </button>
+              <button class="btn-secondary" onclick="switchAdminTab('settings')" style="justify-content: center; padding: 0.75rem;">
+                <span>⚙️ System Settings &amp; Backup</span>
+              </button>
+              <a href="/api/admin/export" class="btn-secondary" id="directExportBtn" style="justify-content: center; padding: 0.75rem; color: var(--lime-light); border-color: rgba(132, 204, 22, 0.4);" target="_blank">
+                <span>💾 Export Full Database Backup (JSON)</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==========================================
+           TAB 2: BLOG MANAGEMENT & CONTENT STUDIO
+           ========================================== -->
+      <div class="tab-panel" id="tab-blogs">
+        <div class="data-table-wrapper">
+          <div class="table-header-actions">
+            <div>
+              <h2 style="font-size: 1.3rem; font-weight: 800;">Tech Articles &amp; Editorial Studio</h2>
+              <p style="font-size: 0.85rem; color: var(--text-secondary);">Manage, publish, duplicate, feature, and edit articles.</p>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+              <select id="adminCategoryFilter" class="form-input" style="width: 170px; padding: 0.5rem 0.8rem; font-size: 0.85rem;">
+                <option value="all">All Categories</option>
+                <option value="AI & Machine Learning">AI & Machine Learning</option>
+                <option value="Web Development">Web Development</option>
+                <option value="Cybersecurity">Cybersecurity</option>
+                <option value="Future Tech">Future Tech</option>
+                <option value="Cloud & DevOps">Cloud & DevOps</option>
+                <option value="Gadgets & Hardware">Gadgets & Hardware</option>
+              </select>
+
+              <input type="text" id="adminBlogSearch" class="form-input" style="width: 200px; padding: 0.5rem 0.8rem; font-size: 0.85rem;" placeholder="Search title/tags...">
+
+              <button class="btn-primary" onclick="openCreateBlogModal()" style="padding: 0.55rem 1.2rem;">
+                <span>+ New Article</span>
+              </button>
+            </div>
+          </div>
+
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Cover</th>
+                <th>Title &amp; Author</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Engagement</th>
+                <th>Published</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="adminBlogsTableBody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ==========================================
+           TAB 3: REVIEW MODERATION & REPLIES
+           ========================================== -->
+      <div class="tab-panel" id="tab-reviews">
+        <div class="data-table-wrapper">
+          <div class="table-header-actions">
+            <div>
+              <h2 style="font-size: 1.3rem; font-weight: 800;">Reader Reviews &amp; Editorial Replies</h2>
+              <p style="font-size: 0.85rem; color: var(--text-secondary);">Filter reviews, write official responses, or moderate feedback.</p>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <select id="adminReviewRatingFilter" class="form-input" style="width: 150px; padding: 0.5rem 0.8rem; font-size: 0.85rem;">
+                <option value="all">All Ratings</option>
+                <option value="5">5 Stars ★★★★★</option>
+                <option value="4">4 Stars ★★★★☆</option>
+                <option value="3">3 Stars ★★★☆☆</option>
+                <option value="2">2 Stars ★★☆☆☆</option>
+                <option value="1">1 Star ★☆☆☆☆</option>
+              </select>
+
+              <input type="text" id="adminReviewSearch" class="form-input" style="width: 180px; padding: 0.5rem 0.8rem; font-size: 0.85rem;" placeholder="Search reviewer...">
+            </div>
+          </div>
+
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Article</th>
+                <th>Reviewer</th>
+                <th>Rating</th>
+                <th>Comment</th>
+                <th>Admin Reply Status</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="adminReviewsTableBody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ==========================================
+           TAB 4: MESSAGES & CRM
+           ========================================== -->
+      <div class="tab-panel" id="tab-messages">
+        <div class="data-table-wrapper">
+          <div class="table-header-actions">
+            <div>
+              <h2 style="font-size: 1.3rem; font-weight: 800;">Contact Inquiries &amp; CRM</h2>
+              <p style="font-size: 0.85rem; color: var(--text-secondary);">Messages received from website contact form and readers.</p>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <select id="adminMessageStatusFilter" class="form-input" style="width: 140px; padding: 0.5rem 0.8rem; font-size: 0.85rem;">
+                <option value="all">All Messages</option>
+                <option value="unread">Unread Only</option>
+                <option value="read">Read Only</option>
+              </select>
+              <input type="text" id="adminMessageSearch" class="form-input" style="width: 180px; padding: 0.5rem 0.8rem; font-size: 0.85rem;" placeholder="Search sender/subject...">
+            </div>
+          </div>
+
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th>Sender</th>
+                <th>Subject</th>
+                <th>Message Snippet</th>
+                <th>Received</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="adminMessagesTableBody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ==========================================
+           TAB 5: SYSTEM SETTINGS & BACKUP HUB
+           ========================================== -->
+      <div class="tab-panel" id="tab-settings">
+        <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 2rem;">
+          <!-- Site Configuration Form -->
+          <div class="data-table-wrapper" style="padding: 2rem;">
+            <h2 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 0.5rem;">⚙️ General Site Settings</h2>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.5rem;">Customize your blog website identity, metadata, and social channels.</p>
+
+            <form id="adminSettingsForm">
+              <div class="form-group">
+                <label class="form-label" for="settingSiteName">Website Brand Name</label>
+                <input type="text" id="settingSiteName" class="form-input" value="Insight Hub" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="settingTagline">Website Tagline / Slogan</label>
+                <input type="text" id="settingTagline" class="form-input" value="Explore · Learn · Innovate · Shape the Future">
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                  <label class="form-label" for="settingContactEmail">Official Contact Email</label>
+                  <input type="email" id="settingContactEmail" class="form-input" value="asitech5info@gmail.com" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="settingYoutubeUrl">Official YouTube URL</label>
+                  <input type="url" id="settingYoutubeUrl" class="form-input" value="https://www.youtube.com/@howtech_works" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="settingAnnouncementBanner">Announcement Bar Text</label>
+                <input type="text" id="settingAnnouncementBanner" class="form-input" value="🚀 Welcome to Insight Hub — The Future of Tech &amp; AI Insights">
+              </div>
+
+              <div style="display: flex; align-items: center; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
+                <button type="submit" class="btn-primary" id="saveSettingsBtn">
+                  <span>Save Configuration</span>
+                  <span>💾</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Backup & Diagnostics Card -->
+          <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <!-- Database Backup Card -->
+            <div class="data-table-wrapper" style="padding: 1.75rem;">
+              <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 0.5rem;">💾 Database Backup &amp; Recovery</h3>
+              <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">Download a complete JSON snapshot of all articles, reviews, and inquiries.</p>
+              
+              <a href="/api/admin/export" class="btn-primary" id="downloadBackupBtn" target="_blank" style="width: 100%; justify-content: center; margin-bottom: 0.75rem;">
+                <span>Download Full DB Backup (.json)</span>
+                <span>⬇️</span>
+              </a>
+              <div style="font-size: 0.78rem; color: var(--text-muted); text-align: center;">Includes full database snapshot with timestamps.</div>
+            </div>
+
+            <!-- System Diagnostics Card -->
+            <div class="data-table-wrapper" style="padding: 1.75rem;">
+              <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 1rem;">⚡ System Diagnostics</h3>
+              <div style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.88rem;">
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.4rem;">
+                  <span style="color:var(--text-secondary);">Node.js Server:</span>
+                  <span style="color:var(--lime-light); font-weight:700;">🟢 Online (Active)</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.4rem;">
+                  <span style="color:var(--text-secondary);">Database Engine:</span>
+                  <span style="color:var(--text-primary); font-weight:600;">Encrypted Local JSON Store</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.4rem;">
+                  <span style="color:var(--text-secondary);">LAN IP Broadcasting:</span>
+                  <span style="color:var(--cyan-light); font-weight:600;">0.0.0.0 Enabled</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding-bottom: 0.2rem;">
+                  <span style="color:var(--text-secondary);">Security Protocol:</span>
+                  <span style="color:var(--yellow-neon); font-weight:600;">Bearer Token Protected</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ==========================================
+       MODAL: CREATE / EDIT BLOG
+       ========================================== -->
+  <div class="modal-overlay" id="blogEditorModalOverlay">
+    <div class="modal-container" style="max-width: 800px; padding: 2rem;">
+      <button class="modal-close-btn" onclick="closeBlogEditorModal()">✕</button>
+      <h2 id="blogEditorModalTitle" style="font-size: 1.5rem; font-weight: 800; margin-bottom: 1.5rem;">Create New Article</h2>
+
+      <form id="blogEditorForm">
+        <input type="hidden" id="blogEditorId">
+
+        <div class="form-group">
+          <label class="form-label" for="blogFormTitle">Article Title *</label>
+          <input type="text" id="blogFormTitle" class="form-input" placeholder="e.g. Next-Gen Multi-Agent Systems" required>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label" for="blogFormCategory">Category *</label>
+            <select id="blogFormCategory" class="form-input" required>
+              <option value="AI &amp; Machine Learning">AI &amp; Machine Learning</option>
+              <option value="Web Development">Web Development</option>
+              <option value="Cybersecurity">Cybersecurity</option>
+              <option value="Future Tech">Future Tech</option>
+              <option value="Cloud &amp; DevOps">Cloud &amp; DevOps</option>
+              <option value="Gadgets &amp; Hardware">Gadgets &amp; Hardware</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="blogFormReadTime">Read Time</label>
+            <input type="text" id="blogFormReadTime" class="form-input" placeholder="e.g. 5 min read">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="blogFormCoverImage">Cover Image URL</label>
+          <input type="url" id="blogFormCoverImage" class="form-input" placeholder="https://images.unsplash.com/...">
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">
+            Quick Presets: 
+            <button type="button" class="btn-sm" onclick="setCoverPreset('ai')" style="background:rgba(255,255,255,0.05);">AI Tech</button>
+            <button type="button" class="btn-sm" onclick="setCoverPreset('cyber')" style="background:rgba(255,255,255,0.05);">Security</button>
+            <button type="button" class="btn-sm" onclick="setCoverPreset('code')" style="background:rgba(255,255,255,0.05);">Coding</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="blogFormExcerpt">Short Summary / Excerpt *</label>
+          <textarea id="blogFormExcerpt" class="form-textarea" rows="2" placeholder="Brief summary of the article..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="blogFormContent">Full Content (Markdown / Text) *</label>
+          <textarea id="blogFormContent" class="form-textarea" rows="8" placeholder="Write full article here. Supports ## Headings, **bold**, and ```code``` blocks..." required></textarea>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label" for="blogFormAuthorName">Author Name</label>
+            <input type="text" id="blogFormAuthorName" class="form-input" placeholder="e.g. Alex Rivera">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="blogFormTags">Tags (Comma separated)</label>
+            <input type="text" id="blogFormTags" class="form-input" placeholder="e.g. AI, Agents, Cloud">
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
+          <button type="button" class="btn-secondary" onclick="closeBlogEditorModal()">Cancel</button>
+          <button type="submit" class="btn-primary" id="saveBlogBtn">
+            <span>Save Article</span>
+            <span>💾</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       MODAL: REPLY TO REVIEW
+       ========================================== -->
+  <div class="modal-overlay" id="reviewReplyModalOverlay">
+    <div class="modal-container" style="max-width: 600px; padding: 2rem;">
+      <button class="modal-close-btn" onclick="closeReviewReplyModal()">✕</button>
+      <h2 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 1rem;">Reply to Reader Review</h2>
+
+      <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.25rem;">
+        <div style="font-weight: 700; font-size: 0.95rem;" id="modalReviewerName">Reviewer</div>
+        <div style="font-size: 0.85rem; color: #fbbf24;" id="modalReviewRating">★★★★★</div>
+        <p style="font-size: 0.92rem; color: var(--text-secondary); margin-top: 0.5rem;" id="modalReviewComment">Comment text</p>
+      </div>
+
+      <form id="reviewReplyForm">
+        <input type="hidden" id="replyReviewId">
+        <div class="form-group">
+          <label class="form-label" for="adminReplyText">Official Insight Hub Response</label>
+          <textarea id="adminReplyText" class="form-textarea" rows="4" placeholder="Write your official response to this reviewer..." required></textarea>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: flex-end; gap: 1rem;">
+          <button type="button" class="btn-secondary" onclick="closeReviewReplyModal()">Cancel</button>
+          <button type="submit" class="btn-primary">
+            <span>Publish Reply</span>
+            <span>✨</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       MODAL: VIEW MESSAGE
+       ========================================== -->
+  <div class="modal-overlay" id="messageViewModalOverlay">
+    <div class="modal-container" style="max-width: 600px; padding: 2rem;">
+      <button class="modal-close-btn" onclick="closeMessageViewModal()">✕</button>
+      <h2 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 1rem;" id="viewMsgSubject">Message Subject</h2>
+
+      <div style="margin-bottom: 1.5rem;">
+        <div style="font-size: 0.9rem; color: var(--text-secondary);">From: <strong style="color:var(--text-primary);" id="viewMsgSender">Sender Name</strong> (<span id="viewMsgEmail">email@example.com</span>)</div>
+        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;" id="viewMsgDate">Aug 25, 2026</div>
+      </div>
+
+      <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.25rem; font-size: 1rem; line-height: 1.7; margin-bottom: 1.5rem;" id="viewMsgBody">
+        Message body text
+      </div>
+
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
+        <button type="button" class="btn-sm-delete" id="deleteCurrentMsgBtn" style="padding: 0.6rem 1rem;">
+          <span>🗑️ Delete Message</span>
+        </button>
+
+        <div style="display: flex; gap: 0.75rem;">
+          <a href="#" id="replyViaEmailBtn" class="btn-social-mail" target="_blank" style="padding: 0.6rem 1.2rem;">
+            <span>✉️ Reply via Email</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="adminToastContainer"></div>
+
+  <!-- JavaScript -->
+  <script src="/js/admin.js"></script>
+</body>
+</html>
